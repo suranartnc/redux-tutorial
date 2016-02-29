@@ -3,7 +3,15 @@ var webpack = require('webpack');
 
 module.exports = {
 
+    devtool: 'cheap-module-eval-source-map',
+
     entry: path.join(__dirname, 'src/client.js'),
+    
+    entry: [
+        // 'eventsource-polyfill', // necessary for hot reloading with IE
+        'webpack-hot-middleware/client',
+        path.join(__dirname, 'src/client.js')
+    ],
 
     output: {
         path: path.join(__dirname, 'public'),
@@ -11,11 +19,16 @@ module.exports = {
         publicPath: '/assets/'
     },
 
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin()
+    ],
+
     module: {
         loaders: [
             {
                 test: /\.js?$/,
-                loader: 'babel',
+                loaders: ['babel'],
                 exclude: /node_modules/
             }
         ]
