@@ -32,6 +32,8 @@
     "webpack-hot-middleware": "^2.7.1"
   },
   "devDependencies": {
-    "babel-loader": "^6.2.4"
+    "babel-loader": "^6.2.4",
+    "faker": "^3.0.1",
+    "json-server": "^0.8.8"
   }
 }
