@@ -8,19 +8,19 @@ const compiler = webpack(webpackConfig);
 
 app.use(express.static('public'));
 
-app.use(require("webpack-dev-middleware")(compiler, {
-    noInfo: true, 
-    publicPath: webpackConfig.output.publicPath
+app.use(require('webpack-dev-middleware')(compiler, {
+  noInfo: true, 
+  publicPath: webpackConfig.output.publicPath
 }));
-app.use(require("webpack-hot-middleware")(compiler));
+app.use(require('webpack-hot-middleware')(compiler));
 
 app.use(serverRendering);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function (err) {
-	if (err) {
-    	console.log(err);
-    	return;
-  	}
-  	console.log('Server listening on', PORT);
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log('Server listening on', PORT);
 });
