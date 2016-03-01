@@ -9,6 +9,11 @@ const router = jsonServer.router(db());
 // default middlewares
 server.use(jsonServer.defaults());
 
+// Add a delay for 1 second to /articles requests only
+server.use('/articles', function(req, res, next) {
+	setTimeout(next, 1000)
+})
+
 // router middleware
 server.use(router);
 
