@@ -20,18 +20,22 @@ store.subscribe(function() {
     console.log(store.getState());
 });
 
-// Dispatch some actions
-store.dispatch({ 
-	type: 'INCREMENT',
-	size: 1
-});
+// Action Creators
+function increment(size) {
+	return { 
+		type: 'INCREMENT',
+		size
+	}
+}
 
-store.dispatch({ 
-	type: 'INCREMENT',
-	size: 5 
-});
+function decrement(size) {
+	return { 
+		type: 'DECREMENT',
+		size
+	}
+}
 
-store.dispatch({ 
-	type: 'DECREMENT',
-	size: 1
-});
+// Dispatch some Actions
+store.dispatch(increment(1));
+store.dispatch(increment(5));
+store.dispatch(decrement(1));
