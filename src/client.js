@@ -35,7 +35,36 @@ function decrement(size) {
 	}
 }
 
-// Dispatch some Actions
-store.dispatch(increment(1));
-store.dispatch(increment(5));
-store.dispatch(decrement(1));
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
+import { Provider, connect } from 'react-redux';
+
+class App extends Component {
+	
+	componentDidMount() {
+		setInterval(() => {
+			store.dispatch(increment(1));
+		}, 1000);
+	}
+
+	render() {
+		return (
+			<div>{ this.props.counter }</div>
+		);
+	}
+}
+
+const Container = connect(mapStateToProps)(App);
+
+function mapStateToProps(state) {
+	return {
+		counter: state
+	}
+}
+
+ReactDOM.render(
+	<Provider store={store}>
+		<Container />
+	</Provider>
+	, document.getElementById('app'));
