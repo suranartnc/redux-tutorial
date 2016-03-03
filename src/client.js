@@ -44,7 +44,7 @@ class App extends Component {
 	
 	componentDidMount() {
 		setInterval(() => {
-			store.dispatch(increment(1));
+			this.props.dispatch(increment(1));
 		}, 1000);
 	}
 
