@@ -44,7 +44,7 @@ class App extends Component {
 	
 	componentDidMount() {
 		setInterval(() => {
-			this.props.dispatch(increment(1));
+			this.props.increment(1);
 		}, 1000);
 	}
 
@@ -55,7 +55,7 @@ class App extends Component {
 	}
 }
 
-const Container = connect(mapStateToProps)(App);
+const Container = connect(mapStateToProps, { increment, decrement })(App);
 
 function mapStateToProps(state) {
 	return {
