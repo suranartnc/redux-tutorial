@@ -28,7 +28,8 @@
     "babel-register": "^6.6.0",
     "express": "^4.13.4",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "react-dom": "^0.14.7",
+    "redux": "^3.3.1"
   },
   "devDependencies": {
     "babel-loader": "^6.2.4",
