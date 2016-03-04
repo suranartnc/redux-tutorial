@@ -29,7 +29,10 @@ function counter2Reducer(state = 0, action) {
 }
 
 // Store
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, {
+	counter_1: 100,
+	counter_2: 1000
+});
 
 // Subscribe to the updates
 store.subscribe(function() {
