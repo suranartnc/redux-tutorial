@@ -28,17 +28,21 @@ function counter2Reducer(state = 0, action) {
     }
 }
 
-const logger = store => next => action => {
-	console.log('dispatching', action);
+const logger1 = store => next => action => {
+	console.log('LOGGER1: dispatching', action);
 	next(action);
-	console.log('next state', store.getState());
+}
+
+const logger2 = store => next => action => {
+	next(action);
+	console.log('LOGGER2: next state', store.getState());
 }
 
 // Store
 const store = createStore(rootReducer, {
 	counter_1: 100,
 	counter_2: 1000
-}, applyMiddleware(logger));
+}, applyMiddleware(logger1, logger2));
 
 // Action Creators
 function incrementCounter1(size) {
