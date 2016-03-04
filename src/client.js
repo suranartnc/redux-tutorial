@@ -1,11 +1,27 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 
 // Reducer
-function reducer(state = 0, action) {
+const rootReducer = combineReducers({
+	counter_1: counter1Reducer,
+	counter_2: counter2Reducer  
+});
+
+function counter1Reducer(state = 0, action) {
     switch (action.type) {
-        case 'INCREMENT':
+        case 'INCREMENT_COUNTER_1':
             return state + action.size
-        case 'DECREMENT':
+        case 'DECREMENT_COUNTER_1':
+            return state - action.size
+        default:
+            return state
+    }
+}
+
+function counter2Reducer(state = 0, action) {
+    switch (action.type) {
+        case 'INCREMENT_COUNTER_2':
+            return state + action.size
+        case 'DECREMENT_COUNTER_2':
             return state - action.size
         default:
             return state
@@ -13,7 +29,7 @@ function reducer(state = 0, action) {
 }
 
 // Store
-const store = createStore(reducer);
+const store = createStore(rootReducer);
 
 // Subscribe to the updates
 store.subscribe(function() {
@@ -21,16 +37,30 @@ store.subscribe(function() {
 });
 
 // Action Creators
-function increment(size) {
+function incrementCounter1(size) {
 	return { 
-		type: 'INCREMENT',
+		type: 'INCREMENT_COUNTER_1',
 		size
 	}
 }
 
-function decrement(size) {
+function decrementCounter1(size) {
 	return { 
-		type: 'DECREMENT',
+		type: 'DECREMENT_COUNTER_1',
+		size
+	}
+}
+
+function incrementCounter2(size) {
+	return { 
+		type: 'INCREMENT_COUNTER_2',
+		size
+	}
+}
+
+function decrementCounter2(size) {
+	return { 
+		type: 'DECREMENT_COUNTER_2',
 		size
 	}
 }
@@ -44,22 +74,32 @@ class App extends Component {
 	
 	componentDidMount() {
 		setInterval(() => {
-			this.props.increment(1);
+			this.props.incrementCounter1(1);
+			this.props.incrementCounter2(10);
 		}, 1000);
 	}
 
 	render() {
 		return (
-			<div>{ this.props.counter }</div>
+			<div>
+				<p>{ this.props.counter_1 }</p>
+				<p>{ this.props.counter_2 }</p>
+			</div>
 		);
 	}
 }
 
-const Container = connect(mapStateToProps, { increment, decrement })(App);
+const Container = connect(mapStateToProps, { 
+	incrementCounter1, 
+	decrementCounter1, 
+	incrementCounter2, 
+	decrementCounter2 
+})(App);
 
 function mapStateToProps(state) {
 	return {
-		counter: state
+		counter_1: state.counter_1,
+		counter_2: state.counter_2
 	}
 }
 
