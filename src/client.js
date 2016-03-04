@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 // Reducer
 const rootReducer = combineReducers({
@@ -28,16 +28,17 @@ function counter2Reducer(state = 0, action) {
     }
 }
 
+const logger = store => next => action => {
+	console.log('dispatching', action);
+	next(action);
+	console.log('next state', store.getState());
+}
+
 // Store
 const store = createStore(rootReducer, {
 	counter_1: 100,
 	counter_2: 1000
-});
-
-// Subscribe to the updates
-store.subscribe(function() {
-    console.log(store.getState());
-});
+}, applyMiddleware(logger));
 
 // Action Creators
 function incrementCounter1(size) {
