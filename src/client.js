@@ -8,14 +8,18 @@ const rootReducer = combineReducers({
 });
 
 function articleListReducer(state = [], action) {
-	switch(action) {
+	switch(action.type) {
+		case 'DELETE_ARTICLE':
+			return state.filter(article => {
+				return article.id !== action.id
+			});
 		default:
 			return state;
 	}
 }
 
 function articleActiveReducer(state = {}, action) {
-	switch(action) {
+	switch(action.type) {
 		default:
 			return state;
 	}
@@ -38,7 +42,12 @@ const store = createStore(rootReducer, {
 }, applyMiddleware(logger1, logger2));
 
 // Action Creators
-
+function deleteArticle(id) {
+	return {
+		type: 'DELETE_ARTICLE',
+		id
+	}
+}
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -46,9 +55,10 @@ import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
 
 class App extends Component {
-	
-	componentDidMount() {
 
+	handleArticleClick(id, event) {
+		event.preventDefault();
+		this.props.deleteArticle(id);
 	}
 
 	render() {
@@ -61,10 +71,11 @@ class App extends Component {
 						</article>
 					</div>
 					<div className="col-md-4">
-						{ this.props.articleList.map(function(article, index) {
+						{ this.props.articleList.map((article, index) => {
 							return (
 								<article key={ article.id }>
-									{ article.title }
+									<h2>{ article.title }</h2>
+									<button onClick={this.handleArticleClick.bind(this, article.id)}>X</button>
 								</article>
 							);
 						}) }
@@ -75,7 +86,9 @@ class App extends Component {
 	}
 }
 
-const Container = connect(mapStateToProps, {})(App);
+const Container = connect(mapStateToProps, { 
+	deleteArticle 
+})(App);
 
 function mapStateToProps(state) {
 	return {
