@@ -7,6 +7,22 @@ const rootReducer = combineReducers({
 	articleActive: articleActiveReducer
 });
 
+/*
+How to avoid mutable data
+
+Add
+	- Object in Array - array.prototype.concat()
+Get
+	- Object in Array - array.prototype.filter()
+Update
+	- Object in Array - array.prototype.map()
+	- Object - {...myObject, property: newValue}, 
+	           Object.assign({}, myObject, { property: newValue })
+Delete
+	- Object in Array - array.prototype.filter()
+	- Property in Object - delete myObject.propertyName
+*/
+
 function articleListReducer(state = [], action) {
 	switch(action.type) {
 		case 'DELETE_ARTICLE':
