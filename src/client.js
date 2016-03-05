@@ -1,9 +1,11 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+import mockData from './utils/mockData';
 
 // Reducer
 const rootReducer = combineReducers({
 	counter_1: counter1Reducer,
-	counter_2: counter2Reducer  
+	counter_2: counter2Reducer,
+	articleList: articleListReducer
 });
 
 function counter1Reducer(state = 0, action) {
@@ -28,6 +30,13 @@ function counter2Reducer(state = 0, action) {
     }
 }
 
+function articleListReducer(state = [], action) {
+	switch(action) {
+		default:
+			return state;
+	}
+}
+
 const logger1 = store => next => action => {
 	console.log('LOGGER1: dispatching', action);
 	next(action);
@@ -41,7 +50,8 @@ const logger2 = store => next => action => {
 // Store
 const store = createStore(rootReducer, {
 	counter_1: 100,
-	counter_2: 1000
+	counter_2: 1000,
+	articleList: mockData
 }, applyMiddleware(logger1, logger2));
 
 // Action Creators
@@ -92,6 +102,15 @@ class App extends Component {
 			<div>
 				<p>{ this.props.counter_1 }</p>
 				<p>{ this.props.counter_2 }</p>
+				<div>
+					{ this.props.articleList.map(function(article, index) {
+						return (
+							<article key={ article.id }>
+								{ article.title }
+							</article>
+						);
+					}) }
+				</div>
 			</div>
 		);
 	}
@@ -107,7 +126,8 @@ const Container = connect(mapStateToProps, {
 function mapStateToProps(state) {
 	return {
 		counter_1: state.counter_1,
-		counter_2: state.counter_2
+		counter_2: state.counter_2,
+		articleList: state.articleList
 	}
 }
 
