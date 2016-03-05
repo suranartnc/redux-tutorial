@@ -20,6 +20,10 @@ function articleListReducer(state = [], action) {
 
 function articleActiveReducer(state = {}, action) {
 	switch(action.type) {
+		case 'GET_ARTICLE':
+			return mockData.filter(article => {
+				return article.id === action.id
+			})[0];
 		default:
 			return state;
 	}
@@ -49,6 +53,13 @@ function deleteArticle(id) {
 	}
 }
 
+function getArticle(id) {
+	return {
+		type: 'GET_ARTICLE',
+		id
+	}
+}
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -56,9 +67,14 @@ import { Provider, connect } from 'react-redux';
 
 class App extends Component {
 
-	handleArticleClick(id, event) {
+	handleArticleDelete(id, event) {
 		event.preventDefault();
 		this.props.deleteArticle(id);
+	}
+
+	handleArticleClick(id, event) {
+		event.preventDefault();
+		this.props.getArticle(id);
 	}
 
 	render() {
@@ -74,8 +90,8 @@ class App extends Component {
 						{ this.props.articleList.map((article, index) => {
 							return (
 								<article key={ article.id }>
-									<h2>{ article.title }</h2>
-									<button onClick={this.handleArticleClick.bind(this, article.id)}>X</button>
+									<h2><a href="#" onClick={this.handleArticleClick.bind(this, article.id)}>{ article.title }</a></h2>
+									<button onClick={this.handleArticleDelete.bind(this, article.id)}>X</button>
 								</article>
 							);
 						}) }
@@ -87,7 +103,8 @@ class App extends Component {
 }
 
 const Container = connect(mapStateToProps, { 
-	deleteArticle 
+	deleteArticle,
+	getArticle
 })(App);
 
 function mapStateToProps(state) {
