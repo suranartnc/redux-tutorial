@@ -1,5 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import mockData from './utils/mockData';
+
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 // Reducer
 const rootReducer = combineReducers({
@@ -25,10 +27,8 @@ Delete
 
 function articleListReducer(state = [], action) {
 	switch(action.type) {
-		case 'DELETE_ARTICLE':
-			return state.filter(article => {
-				return article.id !== action.id
-			});
+		case 'GET_ARTICLE_LATEST':
+			return action.data||state;
 		default:
 			return state;
 	}
@@ -37,9 +37,7 @@ function articleListReducer(state = [], action) {
 function articleActiveReducer(state = {}, action) {
 	switch(action.type) {
 		case 'GET_ARTICLE':
-			return mockData.filter(article => {
-				return article.id === action.id
-			})[0];
+			return action.data||state;
 		default:
 			return state;
 	}
@@ -50,6 +48,25 @@ const logger1 = store => next => action => {
 	next(action);
 }
 
+const promiseMiddleware = store => next => action => {
+	
+	const { promise, ...rest } = action;
+
+	if (!promise) {
+		return next(action);
+	}
+
+	promise.then(response => {
+    	if (response.status >= 400) {
+      		throw new Error("Bad response from server");
+      		return false;
+    	}
+    	return response.json();
+  	}).then(data => {
+    	return next({...rest, data});
+  	});
+}
+
 const logger2 = store => next => action => {
 	next(action);
 	console.log('LOGGER2: next state', store.getState());
@@ -57,9 +74,9 @@ const logger2 = store => next => action => {
 
 // Store
 const store = createStore(rootReducer, {
-	articleList: mockData,
-	articleActive: mockData[0]
-}, applyMiddleware(logger1, logger2));
+	articleList: [],
+	articleActive: {}
+}, applyMiddleware(logger1, promiseMiddleware, logger2));
 
 // Action Creators
 function deleteArticle(id) {
@@ -72,7 +89,14 @@ function deleteArticle(id) {
 function getArticle(id) {
 	return {
 		type: 'GET_ARTICLE',
-		id
+		promise: fetch(`http://localhost:3004/articles/${id}`)
+	}
+}
+
+function getArticleLatest() {
+	return {
+		type: 'GET_ARTICLE_LATEST',
+		promise: fetch('http://localhost:3004/articles')
 	}
 }
 
@@ -82,6 +106,10 @@ import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
 
 class App extends Component {
+
+	componentDidMount() {
+		this.props.getArticleLatest();
+	}
 
 	handleArticleDelete(id, event) {
 		event.preventDefault();
@@ -100,14 +128,14 @@ class App extends Component {
 					<div className="col-md-8">
 						<article>
 							<h1>{ this.props.articleActive.title }</h1>
+							<div dangerouslySetInnerHTML={{ __html: this.props.articleActive.body }} />
 						</article>
 					</div>
 					<div className="col-md-4">
 						{ this.props.articleList.map((article, index) => {
 							return (
 								<article key={ article.id }>
-									<h2><a href="#" onClick={this.handleArticleClick.bind(this, article.id)}>{ article.title }</a></h2>
-									<button onClick={this.handleArticleDelete.bind(this, article.id)}>X</button>
+									<h3><a href="#" onClick={this.handleArticleClick.bind(this, article.id)}>{ article.title }</a></h3>
 								</article>
 							);
 						}) }
@@ -120,7 +148,8 @@ class App extends Component {
 
 const Container = connect(mapStateToProps, { 
 	deleteArticle,
-	getArticle
+	getArticle,
+	getArticleLatest
 })(App);
 
 function mapStateToProps(state) {

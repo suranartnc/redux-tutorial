@@ -11,7 +11,7 @@ server.use(jsonServer.defaults());
 
 // Add a delay for 1 second to /articles requests only
 server.use('/articles', function(req, res, next) {
-	setTimeout(next, 1000)
+	setTimeout(next, 500)
 })
 
 // router middleware
